@@ -5,7 +5,7 @@
       "name": "HUNTERS_RETURN_HUNTER",
       "constructor": "(Ljava/util/function/Supplier;[I)V",
       "parameters": {
-        "class": "baguchan/hunters_return/init/RaiderEnumParams",
+        "class": "baguchi/hunters_return/init/RaiderEnumParams",
         "field": "HUNTER"
       }
     }
