@@ -1,5 +1,6 @@
 package baguchi.hunters_return;
 
+import baguchi.hunters_return.init.HunterDataComponents;
 import baguchi.hunters_return.init.HunterEntityRegistry;
 import baguchi.hunters_return.init.HunterItems;
 import baguchi.hunters_return.init.HunterSounds;
@@ -25,6 +26,7 @@ public class HuntersReturn {
 		modEventBus.addListener(this::setup);
 		HunterEntityRegistry.ENTITIES_REGISTRY.register(modEventBus);
 		HunterItems.ITEM_REGISTRY.register(modEventBus);
+		HunterDataComponents.DATA_COMPONENTS.register(modEventBus);
 		HunterSounds.SOUND_EVENTS.register(modEventBus);
 		modContainer.registerConfig(ModConfig.Type.COMMON, HunterConfig.COMMON_SPEC);
 		modContainer.registerConfig(ModConfig.Type.CLIENT, HunterConfig.CLIENT_SPEC);
