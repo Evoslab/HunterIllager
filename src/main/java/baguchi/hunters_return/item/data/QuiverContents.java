@@ -1,5 +1,6 @@
 package baguchi.hunters_return.item.data;
 
+import baguchi.hunters_return.init.HunterDataComponents;
 import com.google.common.collect.Lists;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.DataResult;
@@ -64,12 +65,12 @@ public final class QuiverContents implements TooltipComponent {
     }
 
     static Fraction getWeight(ItemStack p_332084_) {
-        QuiverContents bundlecontents = p_332084_.get(DataComponents.BUNDLE_CONTENTS);
+        QuiverContents bundlecontents = p_332084_.get(HunterDataComponents.QUIVER_CONTENTS);
         if (bundlecontents != null) {
             return BUNDLE_IN_BUNDLE_WEIGHT.add(bundlecontents.weight());
         } else {
             List<BeehiveBlockEntity.Occupant> list = p_332084_.getOrDefault(DataComponents.BEES, List.of());
-            return !list.isEmpty() ? Fraction.ONE : Fraction.getFraction(1, p_332084_.getMaxStackSize());
+            return !list.isEmpty() ? Fraction.ONE : Fraction.getFraction(1, p_332084_.getMaxStackSize() * 2);
         }
     }
 

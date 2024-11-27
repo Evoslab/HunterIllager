@@ -2,6 +2,7 @@
   "item.hunters_return.spawnegg_hunter": "Hunter Spawn Egg",
   "item.hunters_return.boomerang": "Boomerang",
   "item.hunters_return.quiver": "Quiver",
+  "item.hunters_return.quiver.empty.description": "Can store two stacks of multiple arrows",
   "entity.hunters_return.boomerang": "Boomerang",
   "entity.hunters_return.spin_blade": "Spin Blade",
   "entity.hunters_return.hunter": "Hunter",

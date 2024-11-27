@@ -3,8 +3,6 @@ package baguchi.hunters_return.item;
 import baguchi.hunters_return.init.HunterDataComponents;
 import baguchi.hunters_return.item.data.QuiverContents;
 import baguchi.hunters_return.item.data.QuiverTooltips;
-import net.minecraft.core.Direction;
-import net.minecraft.core.Position;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
@@ -19,49 +17,25 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.SlotAccess;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.entity.projectile.AbstractArrow;
-import net.minecraft.world.entity.projectile.Arrow;
-import net.minecraft.world.entity.projectile.Projectile;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.ClickAction;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.inventory.tooltip.TooltipComponent;
-import net.minecraft.world.item.ArrowItem;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.ItemUtils;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
 import org.apache.commons.lang3.math.Fraction;
 
-import javax.annotation.Nullable;
 import java.util.Optional;
 
-public class QuiverItem extends ArrowItem {
+public class QuiverItem extends Item {
     private static final int FULL_BAR_COLOR = ARGB.colorFromFloat(1.0F, 1.0F, 0.33F, 0.33F);
     private static final int BAR_COLOR = ARGB.colorFromFloat(1.0F, 0.44F, 0.53F, 1.0F);
 
     public QuiverItem(Properties p_40512_) {
         super(p_40512_);
-    }
-
-    public AbstractArrow createArrow(Level p_40513_, ItemStack p_40514_, LivingEntity p_40515_, @Nullable ItemStack p_344832_) {
-        return new Arrow(p_40513_, p_40515_, p_40514_.copyWithCount(1), p_344832_);
-    }
-
-    public Projectile asProjectile(Level p_338330_, Position p_338329_, ItemStack p_338197_, Direction p_338469_) {
-        Arrow arrow = new Arrow(p_338330_, p_338329_.x(), p_338329_.y(), p_338329_.z(), p_338197_.copyWithCount(1), (ItemStack) null);
-        arrow.pickup = AbstractArrow.Pickup.ALLOWED;
-        return arrow;
-    }
-
-    public boolean isInfinite(ItemStack ammo, ItemStack bow, LivingEntity livingEntity) {
-        return false;
-    }
-
-
-    public static float getFullnessDisplay(ItemStack p_150767_) {
-        QuiverContents bundlecontents = p_150767_.getOrDefault(HunterDataComponents.QUIVER_CONTENTS, QuiverContents.EMPTY);
-        return bundlecontents.weight().floatValue();
     }
 
     @Override
@@ -213,7 +187,7 @@ public class QuiverItem extends ArrowItem {
     private boolean dropContent(ItemStack p_371437_, Player p_371809_) {
         QuiverContents bundlecontents = p_371437_.get(HunterDataComponents.QUIVER_CONTENTS);
         if (bundlecontents != null && !bundlecontents.isEmpty()) {
-            Optional<ItemStack> optional = removeOneItemFromBundle(p_371437_, p_371809_, bundlecontents);
+            Optional<ItemStack> optional = removeOneItemFromQuiver(p_371437_, p_371809_, bundlecontents);
             if (optional.isPresent()) {
                 p_371809_.drop(optional.get(), true);
                 return true;
@@ -225,11 +199,22 @@ public class QuiverItem extends ArrowItem {
         }
     }
 
-    private static Optional<ItemStack> removeOneItemFromBundle(ItemStack p_371385_, Player p_371941_, QuiverContents p_371197_) {
+    private static Optional<ItemStack> removeOneItemFromQuiver(ItemStack p_371385_, Player p_371941_, QuiverContents p_371197_) {
         QuiverContents.Mutable bundlecontents$mutable = new QuiverContents.Mutable(p_371197_);
         ItemStack itemstack = bundlecontents$mutable.removeOne();
         if (itemstack != null) {
             playRemoveOneSound(p_371941_);
+            p_371385_.set(HunterDataComponents.QUIVER_CONTENTS, bundlecontents$mutable.toImmutable());
+            return Optional.of(itemstack);
+        } else {
+            return Optional.empty();
+        }
+    }
+
+    public static Optional<ItemStack> removeOneItemFromQuiverWithoutPlayer(ItemStack p_371385_, QuiverContents p_371197_) {
+        QuiverContents.Mutable bundlecontents$mutable = new QuiverContents.Mutable(p_371197_);
+        ItemStack itemstack = bundlecontents$mutable.removeOne();
+        if (itemstack != null) {
             p_371385_.set(HunterDataComponents.QUIVER_CONTENTS, bundlecontents$mutable.toImmutable());
             return Optional.of(itemstack);
         } else {
