@@ -1,8 +1,10 @@
 package baguchi.hunters_return.message;
 
+import baguchi.hunters_return.HuntersReturn;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.item.BundleItem;
@@ -11,7 +13,7 @@ import net.neoforged.neoforge.network.handling.IPayloadContext;
 
 public record QuiverSelectPacket(int slotId, int selectedItemIndex) implements CustomPacketPayload {
     public static final StreamCodec<FriendlyByteBuf, QuiverSelectPacket> STREAM_CODEC = CustomPacketPayload.codec(QuiverSelectPacket::write, QuiverSelectPacket::new);
-    public static final CustomPacketPayload.Type<QuiverSelectPacket> TYPE = CustomPacketPayload.createType("hunters_return:quiver");
+    public static final CustomPacketPayload.Type<QuiverSelectPacket> TYPE = new CustomPacketPayload.Type<>(ResourceLocation.fromNamespaceAndPath(HuntersReturn.MODID, "select_quiver"));
 
     @Override
     public Type<? extends CustomPacketPayload> type() {
