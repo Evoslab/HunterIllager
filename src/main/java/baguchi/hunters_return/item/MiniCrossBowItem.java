@@ -92,11 +92,11 @@ public class MiniCrossBowItem extends CrossbowItem {
 
     @Override
     public int getUseDuration(ItemStack p_40938_, LivingEntity p_344898_) {
-        return getChargeDuration(p_40938_, p_344898_) + 5;
+        return getChargeDuration(p_40938_, p_344898_) + 3;
     }
 
     public static int getChargeDuration(ItemStack p_352255_, LivingEntity p_345687_) {
-        float f = EnchantmentHelper.modifyCrossbowChargingTime(p_352255_, p_345687_, 0.5F);
+        float f = EnchantmentHelper.modifyCrossbowChargingTime(p_352255_, p_345687_, 0.65F);
         return Mth.floor(f * 20.0F);
     }
 
