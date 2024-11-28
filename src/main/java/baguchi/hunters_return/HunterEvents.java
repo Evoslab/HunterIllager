@@ -18,7 +18,7 @@ public class HunterEvents {
             QuiverContents quiverContents = stack.getOrDefault(HunterDataComponents.QUIVER_CONTENTS, QuiverContents.EMPTY);
 
             if (!quiverContents.isEmpty()) {
-                event.setProjectileItemStack(QuiverItem.removeOneItemFromQuiverWithoutPlayer(stack, quiverContents).get());
+                event.setProjectileItemStack(QuiverItem.removeOneNonStackItemFromQuiverWithoutPlayer(stack, quiverContents).get());
             }
         }
     }

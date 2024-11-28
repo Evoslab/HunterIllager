@@ -24,7 +24,6 @@ import net.minecraft.world.inventory.tooltip.TooltipComponent;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.ItemUtils;
-import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
 import org.apache.commons.lang3.math.Fraction;
 
@@ -57,7 +56,7 @@ public class QuiverItem extends Item {
                 this.broadcastChangesOnContainerMenu(p_150736_);
                 return true;
             } else if (p_150735_ == ClickAction.SECONDARY && itemstack.isEmpty()) {
-                ItemStack itemstack1 = bundlecontents$mutable.removeOne();
+                ItemStack itemstack1 = bundlecontents$mutable.removeOneStack();
                 if (itemstack1 != null) {
                     ItemStack itemstack2 = p_150734_.safeInsert(itemstack1);
                     if (itemstack2.getCount() > 0) {
@@ -90,7 +89,7 @@ public class QuiverItem extends Item {
                 return false;
             } else {
                 QuiverContents.Mutable bundlecontents$mutable = new QuiverContents.Mutable(bundlecontents);
-                if (p_150745_ == ClickAction.PRIMARY && !p_150743_.isEmpty() && (p_150743_.is(ItemTags.ARROWS)) || p_150743_.is(Items.FIREWORK_ROCKET)) {
+                if (p_150745_ == ClickAction.PRIMARY && !p_150743_.isEmpty() && (p_150743_.is(ItemTags.ARROWS))) {
                     if (p_150744_.allowModification(p_150746_) && bundlecontents$mutable.tryInsert(p_150743_) > 0) {
                         playInsertSound(p_150746_);
                     } else {
@@ -102,7 +101,7 @@ public class QuiverItem extends Item {
                     return true;
                 } else if (p_150745_ == ClickAction.SECONDARY && p_150743_.isEmpty()) {
                     if (p_150744_.allowModification(p_150746_)) {
-                        ItemStack itemstack = bundlecontents$mutable.removeOne();
+                        ItemStack itemstack = bundlecontents$mutable.removeOneStack();
                         if (itemstack != null) {
                             playRemoveOneSound(p_150746_);
                             p_150747_.set(itemstack);
@@ -201,7 +200,7 @@ public class QuiverItem extends Item {
 
     private static Optional<ItemStack> removeOneItemFromQuiver(ItemStack p_371385_, Player p_371941_, QuiverContents p_371197_) {
         QuiverContents.Mutable bundlecontents$mutable = new QuiverContents.Mutable(p_371197_);
-        ItemStack itemstack = bundlecontents$mutable.removeOne();
+        ItemStack itemstack = bundlecontents$mutable.removeOneStack();
         if (itemstack != null) {
             playRemoveOneSound(p_371941_);
             p_371385_.set(HunterDataComponents.QUIVER_CONTENTS, bundlecontents$mutable.toImmutable());
@@ -211,12 +210,17 @@ public class QuiverItem extends Item {
         }
     }
 
-    public static Optional<ItemStack> removeOneItemFromQuiverWithoutPlayer(ItemStack p_371385_, QuiverContents p_371197_) {
+    public static Optional<ItemStack> removeOneNonStackItemFromQuiverWithoutPlayer(ItemStack p_371385_, QuiverContents p_371197_) {
         QuiverContents.Mutable bundlecontents$mutable = new QuiverContents.Mutable(p_371197_);
-        ItemStack itemstack = bundlecontents$mutable.removeOne();
+        ItemStack itemstack = bundlecontents$mutable.removeOneItem();
         if (itemstack != null) {
+            ItemStack copy = itemstack.copyWithCount(1);
+            itemstack.shrink(1);
+            if (!itemstack.isEmpty()) {
+                bundlecontents$mutable.tryInsert(itemstack.copy());
+            }
             p_371385_.set(HunterDataComponents.QUIVER_CONTENTS, bundlecontents$mutable.toImmutable());
-            return Optional.of(itemstack);
+            return Optional.of(copy);
         } else {
             return Optional.empty();
         }

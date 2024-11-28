@@ -215,7 +215,7 @@ public final class QuiverContents implements TooltipComponent {
         }
 
         @Nullable
-        public ItemStack removeOne() {
+        public ItemStack removeOneStack() {
             if (this.items.isEmpty()) {
                 return null;
             } else {
@@ -224,6 +224,23 @@ public final class QuiverContents implements TooltipComponent {
                 this.weight = this.weight.subtract(QuiverContents.getWeight(itemstack).multiplyBy(Fraction.getFraction(itemstack.getCount(), 1)));
                 this.toggleSelectedItem(-1);
                 return itemstack;
+            }
+        }
+
+        @Nullable
+        public ItemStack removeOneItem() {
+            if (this.items.isEmpty()) {
+                return null;
+            } else {
+                int i = this.selectedItem != -1 && this.selectedItem < this.items.size() ? this.selectedItem : 0;
+                ItemStack itemstack = this.items.get(i);
+                ItemStack splitOne = itemstack.split(1);
+                this.weight = this.weight.subtract(Fraction.ONE);
+                if (itemstack.isEmpty()) {
+                    this.items.remove(i);
+                    this.toggleSelectedItem(-1);
+                }
+                return splitOne;
             }
         }
 
