@@ -19,7 +19,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 
 public class HunterModel<T extends HunterRenderState> extends EntityModel<T> implements ArmedModel, HeadedModel, baguchi.bagus_lib.client.layer.IArmor {
-	// This layer location should be baked with EntityRendererProvider.Context in the entity renderer and passed into this model's constructor
+    // This layer location should be baked with EntityRendererProvider.Context in the entityId renderer and passed into this model's constructor
 	private final ModelPart body;
 	private final ModelPart everything;
 	private final ModelPart LeftLeg;
