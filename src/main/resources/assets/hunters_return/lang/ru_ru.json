@@ -1,8 +1,11 @@
 {
   "item.hunters_return.spawnegg_hunter": "Яйцо призыва егеря",
   "item.hunters_return.boomerang": "Бумеранг",
+  "item.hunters_return.quiver": "Колчан",
+  "item.hunters_return.mini_crossbow": "Мини-арбалет",
+  "item.hunters_return.quiver.empty.description": "Может хранить две стопки стрел разных типов",
   "entity.hunters_return.boomerang": "Бумеранг",
-  "entity.hunters_return.spin_blade": "Вращающейся клинок",
+  "entity.hunters_return.spin_blade": "Вращающийся клинок",
   "entity.hunters_return.hunter": "Егерь",
   "subtitles.hunters_return.hunter.idle": "Егерь бормочет",
   "subtitles.hunters_return.hunter.hurt": "Егерь ранен",
