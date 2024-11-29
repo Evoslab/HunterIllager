@@ -1,7 +1,0 @@
-{
-  "replace": false,
-  "values": [
-    "#minecraft:is_taiga",
-    "#minecraft:is_forest"
-  ]
-}

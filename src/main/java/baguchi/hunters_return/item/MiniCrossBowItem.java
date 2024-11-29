@@ -87,7 +87,7 @@ public class MiniCrossBowItem extends CrossbowItem {
     }
 
     private static float getShootingPower(ChargedProjectiles p_330249_) {
-        return p_330249_.contains(Items.FIREWORK_ROCKET) ? 1.6F * 0.8F : 3.15F * 0.8F;
+        return p_330249_.contains(Items.FIREWORK_ROCKET) ? 1.6F * 0.8F : 2.85F;
     }
 
     @Override
