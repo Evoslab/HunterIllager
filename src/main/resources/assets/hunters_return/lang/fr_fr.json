@@ -1,6 +1,6 @@
 {
   "item.hunters_return.spawnegg_hunter": "Oeuf d'apparition du Chasseur",
-  "item.hunters_return.quivers": "Carquois",
+  "item.hunters_return.quiver": "Carquois",
   "item.hunters_return.boomerang": "Boomerang",
   "item.hunters_return.quiver.desc": "Vous pouvez stocker la flèche en faisant un clic droit tout en maintenant le carquois et la flèche.",
   "entity.hunters_return.hunter": "Chasseur",

@@ -10,7 +10,7 @@
         {
           "type": "item",
           "name": "minecraft:arrow",
-          "weight": 15,
+          "weight": 20,
           "functions": [
             {
               "function": "minecraft:set_count",
@@ -24,7 +24,12 @@
         {
           "type": "item",
           "name": "minecraft:bow",
-          "weight": 5
+          "weight": 4
+        },
+        {
+          "type": "item",
+          "name": "hunters_return:mini_crossbow",
+          "weight": 1
         }
       ]
     }

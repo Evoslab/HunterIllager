@@ -1,0 +1,24 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "key": {
+    "I": {
+      "item": "minecraft:iron_nugget"
+    },
+    "S": {
+      "tag": "c:strings"
+    },
+    "R": {
+      "tag": "c:rods/wooden"
+    }
+  },
+  "pattern": [
+    "RIR",
+    "SIS",
+    " R "
+  ],
+  "result": {
+    "count": 1,
+    "id": "hunters_return:mini_crossbow"
+  }
+}
