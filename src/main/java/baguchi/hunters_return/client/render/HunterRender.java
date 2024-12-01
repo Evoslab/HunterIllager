@@ -7,7 +7,6 @@ import baguchi.hunters_return.client.model.HunterModel;
 import baguchi.hunters_return.client.model.OldHunterModel;
 import baguchi.hunters_return.client.render.state.HunterRenderState;
 import baguchi.hunters_return.entity.Hunter;
-import baguchi.hunters_return.item.MiniCrossBowItem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
@@ -61,7 +60,7 @@ public class HunterRender extends MobRenderer<Hunter, HunterRenderState, HunterM
 		hunterState.mainArm = hunter.getMainArm();
 		hunterState.armPose = hunter.getArmPose();
 		hunterState.maxCrossbowChargeDuration = hunterState.armPose == AbstractIllager.IllagerArmPose.CROSSBOW_CHARGE
-				? MiniCrossBowItem.getChargeDuration(hunter.getUseItem(), hunter)
+				? hunter.getUseItem().getUseDuration(hunter)
 				: 0;
 		hunterState.ticksUsingItem = hunter.getTicksUsingItem();
 		hunterState.attackAnim = hunter.getAttackAnim(p_361157_);
