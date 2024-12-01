@@ -6,6 +6,6 @@ import net.neoforged.fml.common.asm.enumextension.EnumProxy;
 public class RaiderEnumParams {
     @SuppressWarnings("unused")
     public static final EnumProxy<Raid.RaiderType> HUNTER = new EnumProxy<>(
-            Raid.RaiderType.class, HunterEntityRegistry.HUNTERILLAGER, new int[]{0, 1, 2, 2, 2, 2, 3, 3}
+            Raid.RaiderType.class, HunterEntityRegistry.HUNTERILLAGER, new int[]{0, 1, 1, 1, 2, 2, 2, 3}
     );
 }

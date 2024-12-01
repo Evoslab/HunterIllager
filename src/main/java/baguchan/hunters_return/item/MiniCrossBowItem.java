@@ -29,12 +29,18 @@ public class MiniCrossBowItem extends CrossbowItem {
     }
 
     @Override
-    public InteractionResultHolder<ItemStack> use(Level p_40920_, Player p_40921_, InteractionHand p_40922_) {
+    public InteractionResultHolder use(Level p_40920_, Player p_40921_, InteractionHand p_40922_) {
         ItemStack itemstack = p_40921_.getItemInHand(p_40922_);
+        InteractionHand hand2 = p_40922_ == InteractionHand.MAIN_HAND ? InteractionHand.OFF_HAND : InteractionHand.MAIN_HAND;
+        ItemStack itemstack2 = p_40921_.getItemInHand(hand2);
         ChargedProjectiles chargedprojectiles = itemstack.get(DataComponents.CHARGED_PROJECTILES);
+        ChargedProjectiles chargedprojectiles2 = itemstack2.get(DataComponents.CHARGED_PROJECTILES);
+
         if (chargedprojectiles != null && !chargedprojectiles.isEmpty()) {
             this.performShooting(p_40920_, p_40921_, p_40922_, itemstack, getShootingPower(chargedprojectiles) * 0.5F, 1.0F, null);
-            return InteractionResultHolder.success(itemstack);
+            return InteractionResultHolder.consume(itemstack);
+        } else if (chargedprojectiles2 != null && !chargedprojectiles2.isEmpty()) {
+            return InteractionResultHolder.fail(itemstack);
         } else {
             return super.use(p_40920_, p_40921_, p_40922_);
         }
@@ -44,8 +50,10 @@ public class MiniCrossBowItem extends CrossbowItem {
     public void releaseUsing(ItemStack p_40875_, Level p_40876_, LivingEntity p_40877_, int p_40878_) {
         int i = this.getUseDuration(p_40875_, p_40877_) - p_40878_;
         float f = getPowerForTime(i, p_40875_, p_40877_);
+        InteractionHand hand2 = p_40877_.getUsedItemHand() == InteractionHand.MAIN_HAND ? InteractionHand.OFF_HAND : InteractionHand.MAIN_HAND;
+        ItemStack itemstack2 = p_40877_.getItemInHand(hand2);
         if (f >= 1.0F && !isCharged(p_40875_) && tryLoadProjectiles(p_40877_, p_40875_)) {
-            ChargingSounds crossbowitem$chargingsounds = this.getChargingSounds(p_40875_);
+            CrossbowItem.ChargingSounds crossbowitem$chargingsounds = this.getChargingSounds(p_40875_);
             crossbowitem$chargingsounds.end()
                     .ifPresent(
                             p_381568_ -> p_40876_.playSound(
@@ -59,9 +67,11 @@ public class MiniCrossBowItem extends CrossbowItem {
                                     1.0F / (p_40876_.getRandom().nextFloat() * 0.5F + 1.0F) + 0.5F
                             )
                     );
+            if (itemstack2.getItem() instanceof MiniCrossBowItem && !isCharged(itemstack2)) {
+                tryLoadProjectiles(p_40877_, itemstack2);
+            }
         }
     }
-
     private static boolean tryLoadProjectiles(LivingEntity p_40860_, ItemStack p_40861_) {
         List<ItemStack> list = draw(p_40861_, p_40860_.getProjectile(p_40861_), p_40860_);
         if (!list.isEmpty()) {

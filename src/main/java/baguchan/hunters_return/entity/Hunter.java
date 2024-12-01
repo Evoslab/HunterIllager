@@ -7,10 +7,12 @@ import baguchan.hunters_return.entity.projectile.BoomerangEntity;
 import baguchan.hunters_return.init.HunterEnchantments;
 import baguchan.hunters_return.init.HunterItems;
 import baguchan.hunters_return.init.HunterSounds;
+import baguchan.hunters_return.item.MiniCrossBowItem;
 import baguchan.hunters_return.utils.HunterConfigUtils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
-import net.minecraft.core.Registry;
+import net.minecraft.core.HolderLookup;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
@@ -42,6 +44,7 @@ import net.minecraft.world.entity.animal.IronGolem;
 import net.minecraft.world.entity.animal.goat.Goat;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.monster.AbstractIllager;
+import net.minecraft.world.entity.monster.CrossbowAttackMob;
 import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.monster.RangedAttackMob;
 import net.minecraft.world.entity.npc.AbstractVillager;
@@ -53,6 +56,7 @@ import net.minecraft.world.entity.raid.Raid;
 import net.minecraft.world.entity.raid.Raider;
 import net.minecraft.world.food.FoodProperties;
 import net.minecraft.world.item.*;
+import net.minecraft.world.item.armortrim.*;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.EnchantmentEffectComponents;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
@@ -69,7 +73,9 @@ import java.util.List;
 import java.util.Optional;
 import java.util.function.Predicate;
 
-public class Hunter extends AbstractIllager implements RangedAttackMob {
+public class Hunter extends AbstractIllager implements CrossbowAttackMob, RangedAttackMob {
+	private static final EntityDataAccessor<Boolean> IS_CHARGING_CROSSBOW = SynchedEntityData.defineId(Hunter.class, EntityDataSerializers.BOOLEAN);
+
 	private static final EntityDataAccessor<String> HUNTER_TYPE = SynchedEntityData.defineId(Hunter.class, EntityDataSerializers.STRING);
 	public static final Predicate<LivingEntity> TARGET_ENTITY_SELECTOR = (p_213616_0_) -> {
 		return !p_213616_0_.isBaby() && HunterConfigUtils.isWhitelistedEntity(p_213616_0_.getType());
@@ -106,6 +112,7 @@ public class Hunter extends AbstractIllager implements RangedAttackMob {
     protected void defineSynchedData(SynchedEntityData.Builder p_326255_) {
         super.defineSynchedData(p_326255_);
         p_326255_.define(HUNTER_TYPE, HunterType.NORMAL.name());
+		p_326255_.define(IS_CHARGING_CROSSBOW, false);
 	}
 
 	public void setHunterType(HunterType type) {
@@ -134,17 +141,18 @@ public class Hunter extends AbstractIllager implements RangedAttackMob {
 		this.goalSelector.addGoal(1, new OpenDoorGoal(this, true));
 		this.goalSelector.addGoal(2, new AbstractIllager.RaiderOpenDoorGoal(this));
 		this.goalSelector.addGoal(3, new Raider.HoldGroundAttackGoal(this, 10.0F));
+		this.goalSelector.addGoal(4, new MiniCrossBowAttackGoal<>(this, 1.1D, 9.0F));
 		this.goalSelector.addGoal(4, new RangedBowAttackGoal<>(this, 1.1F, 50, 16.0F));
 		this.goalSelector.addGoal(4, new BoomeranAttackGoal(this, 50, 16.0F));
 		this.goalSelector.addGoal(4, new AnimateAttackGoal(this, 1.15F, attackAnimationActionPoint, attackAnimationLength) {
 			@Override
 			public boolean canUse() {
-				return !mob.isHolding((item) -> item.getItem() instanceof BowItem) && super.canUse();
+				return !mob.isHolding((item) -> item.getItem() instanceof BowItem || item.getItem() instanceof MiniCrossBowItem) && super.canUse();
 			}
 
 			@Override
 			public boolean canContinueToUse() {
-				return !mob.isHolding((item) -> item.getItem() instanceof BowItem) && super.canContinueToUse();
+				return !mob.isHolding((item) -> item.getItem() instanceof BowItem || item.getItem() instanceof MiniCrossBowItem) && super.canContinueToUse();
 			}
 		});
 		this.goalSelector.addGoal(5, new SleepOnBedGoal(this, 1.0F, 12));
@@ -324,50 +332,61 @@ public class Hunter extends AbstractIllager implements RangedAttackMob {
 		ItemStack itemstack;
 		ItemStack offHandStack = new ItemStack(HunterItems.BOOMERANG.get());
 
-        Registry<Enchantment> enchantment = p_348605_.registryAccess().registryOrThrow(Registries.ENCHANTMENT);
+		HolderLookup.RegistryLookup<Enchantment> enchantment = p_348605_.registryAccess().lookupOrThrow(Registries.ENCHANTMENT);
 		Raid raid = this.getCurrentRaid();
 
 		int i = 1;
-        if (p_37844_ > raid.getNumGroups(Difficulty.NORMAL)) {
+		if (p_37844_ > raid.getNumGroups(Difficulty.NORMAL)) {
 			i = 2;
 		}
 
-        if (raid.getRaidOmenLevel() < 2 || p_37844_ <= raid.getNumGroups(Difficulty.NORMAL)) {
-			itemstack = this.random.nextBoolean() ? new ItemStack(Items.BOW) : new ItemStack(Items.STONE_SWORD);
+		if (raid.getRaidOmenLevel() < 2 || p_37844_ <= raid.getNumGroups(Difficulty.NORMAL)) {
+			itemstack = this.random.nextBoolean() ? new ItemStack(HunterItems.MINI_CROSSBOW.asItem()) : new ItemStack(Items.STONE_SWORD);
 		} else {
-			itemstack = this.random.nextBoolean() ? new ItemStack(Items.BOW) : new ItemStack(Items.IRON_SWORD);
+			itemstack = this.random.nextBoolean() ? new ItemStack(HunterItems.MINI_CROSSBOW.asItem()) : new ItemStack(Items.IRON_SWORD);
 		}
 
 		inventory.addItem(new ItemStack(Items.PORKCHOP, 5));
 
 		boolean flag = this.random.nextFloat() <= raid.getEnchantOdds();
 		if (flag) {
-			if (itemstack.getItem() == Items.BOW) {
-                itemstack.enchant(enchantment.getHolderOrThrow(Enchantments.POWER), i);
+			if (itemstack.getItem() == HunterItems.MINI_CROSSBOW.asItem()) {
+				if (this.random.nextBoolean()) {
+					itemstack.enchant(enchantment.getOrThrow(Enchantments.PIERCING), i);
+				} else {
+					itemstack.enchant(enchantment.getOrThrow(Enchantments.MULTISHOT), 1);
+				}
 			} else {
-                itemstack.enchant(enchantment.getHolderOrThrow(Enchantments.SHARPNESS), i);
+				itemstack.enchant(enchantment.getOrThrow(Enchantments.SHARPNESS), i);
 			}
 
 			inventory.addItem(new ItemStack(Items.COOKED_BEEF, 2));
 
 
-            offHandStack.enchant(enchantment.getHolderOrThrow(HunterEnchantments.CUTTING), i);
+			offHandStack.enchant(enchantment.getOrThrow(HunterEnchantments.CUTTING), i);
 		}
 
-		if (this.random.nextFloat() < 0.25F && !itemstack.is(Items.BOW)) {
-            offHandStack.enchant(enchantment.getHolderOrThrow(HunterEnchantments.RETURN), i);
+		if (this.random.nextFloat() < 0.25F && !itemstack.is(HunterItems.MINI_CROSSBOW)) {
+			offHandStack.enchant(enchantment.getOrThrow(HunterEnchantments.RETURN), i);
 
 			this.setItemInHand(InteractionHand.OFF_HAND, offHandStack);
 		}
-
-        if (itemstack.is(Items.BOW) && raid.getRaidOmenLevel() > 2) {
-			if (this.random.nextFloat() < 0.25F) {
-				this.setItemInHand(InteractionHand.OFF_HAND, createHorn());
-			}
+		if (itemstack.is(HunterItems.MINI_CROSSBOW)) {
+			this.setItemInHand(InteractionHand.OFF_HAND, HunterItems.MINI_CROSSBOW.toStack());
 		}
 
 		if (this.random.nextFloat() < 0.25F) {
 			this.setItemSlot(EquipmentSlot.HEAD, new ItemStack(Items.LEATHER_HELMET));
+		}
+
+		if (this.random.nextFloat() < 0.5F) {
+			HolderLookup.RegistryLookup<TrimMaterial> registrylookup1 = this.registryAccess().lookupOrThrow(Registries.TRIM_MATERIAL);
+			HolderLookup.RegistryLookup<TrimPattern> registrylookup2 = this.registryAccess().lookupOrThrow(Registries.TRIM_PATTERN);
+
+			ItemStack stack = new ItemStack(Items.LEATHER_CHESTPLATE);
+			stack.set(DataComponents.TRIM, new ArmorTrim(registrylookup1.getOrThrow(TrimMaterials.EMERALD), registrylookup2.getOrThrow(TrimPatterns.SENTRY)));
+			this.setItemSlot(EquipmentSlot.CHEST, stack);
+			this.setDropChance(EquipmentSlot.CHEST, 0.0F);
 		}
 
 		this.setItemInHand(InteractionHand.MAIN_HAND, itemstack);
@@ -458,6 +477,9 @@ public class Hunter extends AbstractIllager implements RangedAttackMob {
 				if (this.random.nextFloat() < 0.1F) {
 					this.setItemSlot(EquipmentSlot.MAINHAND, new ItemStack(Items.BOW));
 					this.setItemSlot(EquipmentSlot.OFFHAND, createHorn());
+				} else if (this.random.nextFloat() < 0.5F) {
+					this.setItemSlot(EquipmentSlot.MAINHAND, new ItemStack(HunterItems.MINI_CROSSBOW.asItem()));
+					this.setItemSlot(EquipmentSlot.OFFHAND, new ItemStack(HunterItems.MINI_CROSSBOW.asItem()));
 				} else {
 					this.setItemSlot(EquipmentSlot.MAINHAND, new ItemStack(Items.WOODEN_SWORD));
 					if (this.random.nextBoolean()) {
@@ -504,12 +526,16 @@ public class Hunter extends AbstractIllager implements RangedAttackMob {
 	@OnlyIn(Dist.CLIENT)
 	public AbstractIllager.IllagerArmPose getArmPose() {
 		if (this.isAggressive()) {
+			if (this.isChargingCrossbow()) {
+				return AbstractIllager.IllagerArmPose.CROSSBOW_CHARGE;
+			} else if (this.isHolding(is -> is.getItem() instanceof net.minecraft.world.item.CrossbowItem)) {
+				return AbstractIllager.IllagerArmPose.CROSSBOW_HOLD;
+			}
 			return this.isHolding(Items.BOW) || this.isHolding(HunterItems.BOOMERANG.get()) ? AbstractIllager.IllagerArmPose.BOW_AND_ARROW : AbstractIllager.IllagerArmPose.ATTACKING;
 		} else {
 			return this.isCelebrating() ? AbstractIllager.IllagerArmPose.CELEBRATING : AbstractIllager.IllagerArmPose.CROSSED;
 		}
 	}
-
 	@Override
 	public boolean killedEntity(ServerLevel p_216988_, LivingEntity p_216989_) {
 		this.playSound(HunterSounds.HUNTER_ILLAGER_LAUGH.get(), this.getSoundVolume(), this.getVoicePitch());
@@ -561,6 +587,20 @@ public class Hunter extends AbstractIllager implements RangedAttackMob {
 		this.playSound(SoundEvents.SKELETON_SHOOT, 1.0F, 1.0F / (this.getRandom().nextFloat() * 0.4F + 0.8F));
 		this.level().addFreshEntity(boomerang);
 		this.level().broadcastEntityEvent(this, (byte) 62);
+	}
+
+	public boolean isChargingCrossbow() {
+		return this.entityData.get(IS_CHARGING_CROSSBOW);
+	}
+
+	@Override
+	public void setChargingCrossbow(boolean p_33302_) {
+		this.entityData.set(IS_CHARGING_CROSSBOW, p_33302_);
+	}
+
+	@Override
+	public void onCrossbowAttackPerformed() {
+		this.noActionTime = 0;
 	}
 
 	class MoveToGoal extends Goal {

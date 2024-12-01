@@ -98,6 +98,8 @@ public class HunterModel<T extends Hunter> extends HierarchicalModel<T> implemen
 
 	@Override
 	public void setupAnim(T entityIn, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {
+		AbstractIllager.IllagerArmPose abstractillager$illagerarmpose = entityIn.getArmPose();
+
 		this.root().getAllParts().forEach(ModelPart::resetPose);
 		this.head.yRot = netHeadYaw * ((float) Math.PI / 180F);
 		this.head.xRot = headPitch * ((float) Math.PI / 180F);
@@ -143,21 +145,26 @@ public class HunterModel<T extends Hunter> extends HierarchicalModel<T> implemen
 		}
 
 		if (!HunterConfig.CLIENT.oldAnimation.get()) {
-			if (entityIn.getMainArm() == HumanoidArm.RIGHT) {
-				this.animate(entityIn.shootAnimationState, HunterAnimations.HUNTER_RIGHT_SHOT, ageInTicks);
-				this.animate(entityIn.chargeAnimationState, HunterAnimations.HUNTER_RIGHT_ATTACK_RANGE_CHARGE, ageInTicks);
-				this.animate(entityIn.attackAnimationState, HunterAnimations.HUNTER_RIGHT_ATTACK_MELEE, ageInTicks, 1.5F);
-				this.animate(entityIn.thrownAnimationState, HunterAnimations.HUNTER_LEFT_ATTACK_MELEE, ageInTicks);
-
+			if (abstractillager$illagerarmpose == AbstractIllager.IllagerArmPose.CROSSBOW_HOLD) {
+				AnimationUtils.animateCrossbowHold(this.RightArm, this.LeftArm, this.head, true);
+			} else if (abstractillager$illagerarmpose == AbstractIllager.IllagerArmPose.CROSSBOW_CHARGE) {
+				AnimationUtils.animateCrossbowCharge(this.RightArm, this.LeftArm, entityIn, true);
 			} else {
-				this.animate(entityIn.shootAnimationState, HunterAnimations.HUNTER_LEFT_SHOT, ageInTicks);
-				this.animate(entityIn.chargeAnimationState, HunterAnimations.HUNTER_LEFT_ATTACK_RANGE_CHARGE, ageInTicks);
-				this.animate(entityIn.attackAnimationState, HunterAnimations.HUNTER_LEFT_ATTACK_MELEE, ageInTicks, 1.5F);
-				this.animate(entityIn.thrownAnimationState, HunterAnimations.HUNTER_RIGHT_ATTACK_MELEE, ageInTicks);
+				if (entityIn.getMainArm() == HumanoidArm.RIGHT) {
+					this.animate(entityIn.shootAnimationState, HunterAnimations.HUNTER_RIGHT_SHOT, ageInTicks);
+					this.animate(entityIn.chargeAnimationState, HunterAnimations.HUNTER_RIGHT_ATTACK_RANGE_CHARGE, ageInTicks);
+					this.animate(entityIn.attackAnimationState, HunterAnimations.HUNTER_RIGHT_ATTACK_MELEE, ageInTicks, 1.5F);
+					this.animate(entityIn.thrownAnimationState, HunterAnimations.HUNTER_LEFT_ATTACK_MELEE, ageInTicks);
 
+				} else {
+					this.animate(entityIn.shootAnimationState, HunterAnimations.HUNTER_LEFT_SHOT, ageInTicks);
+					this.animate(entityIn.chargeAnimationState, HunterAnimations.HUNTER_LEFT_ATTACK_RANGE_CHARGE, ageInTicks);
+					this.animate(entityIn.attackAnimationState, HunterAnimations.HUNTER_LEFT_ATTACK_MELEE, ageInTicks, 1.5F);
+					this.animate(entityIn.thrownAnimationState, HunterAnimations.HUNTER_RIGHT_ATTACK_MELEE, ageInTicks);
+
+				}
 			}
 		} else {
-			AbstractIllager.IllagerArmPose abstractillager$illagerarmpose = entityIn.getArmPose();
 			if (abstractillager$illagerarmpose == AbstractIllager.IllagerArmPose.ATTACKING) {
 				if (entityIn.getMainHandItem().isEmpty()) {
 					AnimationUtils.animateZombieArms(this.LeftArm, this.RightArm, true, this.attackTime, ageInTicks);
