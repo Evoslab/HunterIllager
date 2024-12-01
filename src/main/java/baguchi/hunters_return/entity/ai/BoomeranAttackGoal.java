@@ -2,6 +2,7 @@ package baguchi.hunters_return.entity.ai;
 
 import baguchi.hunters_return.entity.Hunter;
 import baguchi.hunters_return.item.BoomerangItem;
+import baguchi.hunters_return.item.MiniCrossBowItem;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.goal.Goal;
 import net.minecraft.world.item.BowItem;
@@ -22,7 +23,7 @@ public class BoomeranAttackGoal extends Goal {
 	@Override
 	public boolean canUse() {
 		LivingEntity entity = mob.getTarget();
-		return !mob.isHolding((item) -> item.getItem() instanceof BowItem) && entity != null && entity.isAlive() && entity.distanceToSqr(mob) > 16D;
+		return !mob.isHolding((item) -> item.getItem() instanceof BowItem || item.getItem() instanceof MiniCrossBowItem) && entity != null && entity.isAlive() && entity.distanceToSqr(mob) > 16D;
 	}
 
 	@Override
