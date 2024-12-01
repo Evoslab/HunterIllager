@@ -16,6 +16,7 @@ import net.minecraft.client.model.geom.builders.*;
 import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.HumanoidArm;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.monster.AbstractIllager;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
@@ -148,7 +149,7 @@ public class HunterModel<T extends Hunter> extends HierarchicalModel<T> implemen
 			if (abstractillager$illagerarmpose == AbstractIllager.IllagerArmPose.CROSSBOW_HOLD) {
 				AnimationUtils.animateCrossbowHold(this.RightArm, this.LeftArm, this.head, true);
 			} else if (abstractillager$illagerarmpose == AbstractIllager.IllagerArmPose.CROSSBOW_CHARGE) {
-				AnimationUtils.animateCrossbowCharge(this.RightArm, this.LeftArm, entityIn, true);
+				animateCrossbowCharge(this.RightArm, this.LeftArm, entityIn, true);
 			} else {
 				if (entityIn.getMainArm() == HumanoidArm.RIGHT) {
 					this.animate(entityIn.shootAnimationState, HunterAnimations.HUNTER_RIGHT_SHOT, ageInTicks);
@@ -205,6 +206,19 @@ public class HunterModel<T extends Hunter> extends HierarchicalModel<T> implemen
 				this.LeftArm.yRot = 0.0F;
 			}
 		}
+	}
+
+	public static void animateCrossbowCharge(ModelPart p_102087_, ModelPart p_102088_, LivingEntity p_102089_, boolean p_102090_) {
+		ModelPart modelpart = p_102090_ ? p_102087_ : p_102088_;
+		ModelPart modelpart1 = p_102090_ ? p_102088_ : p_102087_;
+		modelpart.yRot = p_102090_ ? -0.8F : 0.8F;
+		modelpart.xRot = -0.97079635F;
+		modelpart1.xRot = modelpart.xRot;
+		float f = (float) p_102089_.getUseItem().getUseDuration(p_102089_);
+		float f1 = Mth.clamp((float) p_102089_.getTicksUsingItem(), 0.0F, f);
+		float f2 = f1 / f;
+		modelpart1.yRot = Mth.lerp(f2, 0.4F, 0.85F) * (float) (p_102090_ ? 1 : -1);
+		modelpart1.xRot = Mth.lerp(f2, modelpart1.xRot, (-(float) Math.PI / 2F));
 	}
 
 	@Override

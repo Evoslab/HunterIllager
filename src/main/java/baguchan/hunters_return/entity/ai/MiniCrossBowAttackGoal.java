@@ -1,6 +1,5 @@
 package baguchan.hunters_return.entity.ai;
 
-import baguchan.hunters_return.item.MiniCrossBowItem;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.util.TimeUtil;
 import net.minecraft.util.valueproviders.UniformInt;
@@ -43,7 +42,7 @@ public class MiniCrossBowAttackGoal<T extends net.minecraft.world.entity.Mob & C
     }
 
     private boolean isHoldingCrossbow() {
-        return this.mob.isHolding(is -> is.getItem() instanceof MiniCrossBowItem);
+        return this.mob.isHolding(is -> is.getItem() instanceof CrossbowItem);
     }
 
     @Override
@@ -81,7 +80,7 @@ public class MiniCrossBowAttackGoal<T extends net.minecraft.world.entity.Mob & C
 
     @Override
     public void tick() {
-        InteractionHand hand2 = ProjectileUtil.getWeaponHoldingHand(this.mob, item -> item instanceof MiniCrossBowItem) == InteractionHand.MAIN_HAND ? InteractionHand.OFF_HAND : InteractionHand.MAIN_HAND;
+        InteractionHand hand2 = ProjectileUtil.getWeaponHoldingHand(this.mob, item -> item instanceof CrossbowItem) == InteractionHand.MAIN_HAND ? InteractionHand.OFF_HAND : InteractionHand.MAIN_HAND;
 
         LivingEntity livingentity = this.mob.getTarget();
         if (livingentity != null) {
@@ -113,7 +112,7 @@ public class MiniCrossBowAttackGoal<T extends net.minecraft.world.entity.Mob & C
             this.mob.getLookControl().setLookAt(livingentity, 30.0F, 30.0F);
             if (this.crossbowState == CrossbowState.UNCHARGED) {
                 if (!flag2) {
-                    this.mob.startUsingItem(ProjectileUtil.getWeaponHoldingHand(this.mob, item -> item instanceof MiniCrossBowItem));
+                    this.mob.startUsingItem(ProjectileUtil.getWeaponHoldingHand(this.mob, item -> item instanceof CrossbowItem));
                     this.crossbowState = CrossbowState.CHARGING;
                     this.mob.setChargingCrossbow(true);
                 }
@@ -124,7 +123,7 @@ public class MiniCrossBowAttackGoal<T extends net.minecraft.world.entity.Mob & C
 
                 int i = this.mob.getTicksUsingItem();
                 ItemStack itemstack = this.mob.getUseItem();
-                if (i >= MiniCrossBowItem.getChargeDuration(itemstack, this.mob)) {
+                if (i >= itemstack.getUseDuration(this.mob)) {
                     this.mob.releaseUsingItem();
                     this.crossbowState = CrossbowState.CHARGED;
                     this.attackDelay = 12 + this.mob.getRandom().nextInt(4);
@@ -137,7 +136,7 @@ public class MiniCrossBowAttackGoal<T extends net.minecraft.world.entity.Mob & C
                 }
             } else if (this.crossbowState == CrossbowState.READY_TO_ATTACK && flag) {
                 this.mob.performCrossbowAttack(this.mob, 1.2F);
-                if (this.mob.getItemInHand(hand2).getItem() instanceof MiniCrossBowItem miniCrossBowItem) {
+                if (this.mob.getItemInHand(hand2).getItem() instanceof CrossbowItem miniCrossBowItem) {
                     this.attackDelay = 8;
                     this.crossbowState = CrossbowState.READY_TO_ATTACK_SECOND;
                 } else {

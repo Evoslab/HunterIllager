@@ -573,7 +573,7 @@ public class Hunter extends AbstractIllager implements CrossbowAttackMob, Ranged
 
 	@Override
 	public boolean canFireProjectileWeapon(ProjectileWeaponItem p_32144_) {
-		return p_32144_ == Items.BOW;
+		return p_32144_ == Items.BOW || p_32144_ instanceof CrossbowItem;
 	}
 
 
