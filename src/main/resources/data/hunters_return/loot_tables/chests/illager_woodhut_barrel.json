@@ -10,6 +10,11 @@
       "entries": [
         {
           "type": "item",
+          "name": "hunters_return:mini_crossbow",
+          "weight": 1
+        },
+        {
+          "type": "item",
           "name": "minecraft:bow",
           "weight": 5
         },
