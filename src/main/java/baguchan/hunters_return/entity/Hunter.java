@@ -599,8 +599,9 @@ public class Hunter extends AbstractIllager implements CrossbowAttackMob, Ranged
 
 	@Override
 	public void shootCrossbowProjectile(LivingEntity p_33275_, ItemStack p_33276_, Projectile p_33277_, float p_33278_) {
-		this.shootCrossbowProjectile(this, p_33275_, p_33277_, p_33278_, p_33278_);
+		this.shootCrossbowProjectile(this, p_33275_, p_33277_, p_33278_, 1.3F);
 	}
+
 
 	@Override
 	public void onCrossbowAttackPerformed() {

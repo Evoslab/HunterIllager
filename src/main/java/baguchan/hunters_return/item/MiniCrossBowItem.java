@@ -4,6 +4,7 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
+import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.LivingEntity;
@@ -118,14 +119,8 @@ public class MiniCrossBowItem extends CrossbowItem {
         compoundtag.put("ChargedProjectiles", listtag);
     }
 
-
-    @Override
-    public boolean useOnRelease(ItemStack p_41464_) {
-        return true;
-    }
-
     private static float getShootingPower(ItemStack p_40946_) {
-        return containsChargedProjectile(p_40946_, Items.FIREWORK_ROCKET) ? 1.6F * 0.85F : 1.75F;
+        return containsChargedProjectile(p_40946_, Items.FIREWORK_ROCKET) ? 1.6F * 0.85F : 1.5F;
     }
 
     @Override
@@ -144,7 +139,7 @@ public class MiniCrossBowItem extends CrossbowItem {
 
     public static int getChargeDuration(ItemStack p_40940_) {
         int i = EnchantmentHelper.getItemEnchantmentLevel(Enchantments.QUICK_CHARGE, p_40940_);
-        return i == 0 ? 15 : 15 - 5 * i;
+        return i == 0 ? 13 : Mth.clamp(13 - 5 * i, 1, 13);
     }
 
     @Override
