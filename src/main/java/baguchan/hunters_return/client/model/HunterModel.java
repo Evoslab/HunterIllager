@@ -16,6 +16,7 @@ import net.minecraft.client.model.geom.builders.*;
 import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.HumanoidArm;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.monster.AbstractIllager;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
@@ -98,6 +99,8 @@ public class HunterModel<T extends Hunter> extends HierarchicalModel<T> implemen
 
 	@Override
 	public void setupAnim(T entityIn, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {
+		AbstractIllager.IllagerArmPose abstractillager$illagerarmpose = entityIn.getArmPose();
+
 		this.root().getAllParts().forEach(ModelPart::resetPose);
 		this.head.yRot = netHeadYaw * ((float) Math.PI / 180F);
 		this.head.xRot = headPitch * ((float) Math.PI / 180F);
@@ -143,21 +146,26 @@ public class HunterModel<T extends Hunter> extends HierarchicalModel<T> implemen
 		}
 
 		if (!HunterConfig.CLIENT.oldAnimation.get()) {
-			if (entityIn.getMainArm() == HumanoidArm.RIGHT) {
-				this.animate(entityIn.shootAnimationState, HunterAnimations.HUNTER_RIGHT_SHOT, ageInTicks);
-				this.animate(entityIn.chargeAnimationState, HunterAnimations.HUNTER_RIGHT_ATTACK_RANGE_CHARGE, ageInTicks);
-				this.animate(entityIn.attackAnimationState, HunterAnimations.HUNTER_RIGHT_ATTACK_MELEE, ageInTicks, 1.5F);
-				this.animate(entityIn.thrownAnimationState, HunterAnimations.HUNTER_LEFT_ATTACK_MELEE, ageInTicks);
-
+			if (abstractillager$illagerarmpose == AbstractIllager.IllagerArmPose.CROSSBOW_HOLD) {
+				AnimationUtils.animateCrossbowHold(this.RightArm, this.LeftArm, this.head, true);
+			} else if (abstractillager$illagerarmpose == AbstractIllager.IllagerArmPose.CROSSBOW_CHARGE) {
+				animateCrossbowCharge(this.RightArm, this.LeftArm, entityIn, true);
 			} else {
-				this.animate(entityIn.shootAnimationState, HunterAnimations.HUNTER_LEFT_SHOT, ageInTicks);
-				this.animate(entityIn.chargeAnimationState, HunterAnimations.HUNTER_LEFT_ATTACK_RANGE_CHARGE, ageInTicks);
-				this.animate(entityIn.attackAnimationState, HunterAnimations.HUNTER_LEFT_ATTACK_MELEE, ageInTicks, 1.5F);
-				this.animate(entityIn.thrownAnimationState, HunterAnimations.HUNTER_RIGHT_ATTACK_MELEE, ageInTicks);
+				if (entityIn.getMainArm() == HumanoidArm.RIGHT) {
+					this.animate(entityIn.shootAnimationState, HunterAnimations.HUNTER_RIGHT_SHOT, ageInTicks);
+					this.animate(entityIn.chargeAnimationState, HunterAnimations.HUNTER_RIGHT_ATTACK_RANGE_CHARGE, ageInTicks);
+					this.animate(entityIn.attackAnimationState, HunterAnimations.HUNTER_RIGHT_ATTACK_MELEE, ageInTicks, 1.5F);
+					this.animate(entityIn.thrownAnimationState, HunterAnimations.HUNTER_LEFT_ATTACK_MELEE, ageInTicks);
 
+				} else {
+					this.animate(entityIn.shootAnimationState, HunterAnimations.HUNTER_LEFT_SHOT, ageInTicks);
+					this.animate(entityIn.chargeAnimationState, HunterAnimations.HUNTER_LEFT_ATTACK_RANGE_CHARGE, ageInTicks);
+					this.animate(entityIn.attackAnimationState, HunterAnimations.HUNTER_LEFT_ATTACK_MELEE, ageInTicks, 1.5F);
+					this.animate(entityIn.thrownAnimationState, HunterAnimations.HUNTER_RIGHT_ATTACK_MELEE, ageInTicks);
+
+				}
 			}
 		} else {
-			AbstractIllager.IllagerArmPose abstractillager$illagerarmpose = entityIn.getArmPose();
 			if (abstractillager$illagerarmpose == AbstractIllager.IllagerArmPose.ATTACKING) {
 				if (entityIn.getMainHandItem().isEmpty()) {
 					AnimationUtils.animateZombieArms(this.LeftArm, this.RightArm, true, this.attackTime, ageInTicks);
@@ -198,6 +206,19 @@ public class HunterModel<T extends Hunter> extends HierarchicalModel<T> implemen
 				this.LeftArm.yRot = 0.0F;
 			}
 		}
+	}
+
+	public static void animateCrossbowCharge(ModelPart p_102087_, ModelPart p_102088_, LivingEntity p_102089_, boolean p_102090_) {
+		ModelPart modelpart = p_102090_ ? p_102087_ : p_102088_;
+		ModelPart modelpart1 = p_102090_ ? p_102088_ : p_102087_;
+		modelpart.yRot = p_102090_ ? -0.8F : 0.8F;
+		modelpart.xRot = -0.97079635F;
+		modelpart1.xRot = modelpart.xRot;
+		float f = (float) p_102089_.getUseItem().getUseDuration();
+		float f1 = Mth.clamp((float) p_102089_.getTicksUsingItem(), 0.0F, f);
+		float f2 = f1 / f;
+		modelpart1.yRot = Mth.lerp(f2, 0.4F, 0.85F) * (float) (p_102090_ ? 1 : -1);
+		modelpart1.xRot = Mth.lerp(f2, modelpart1.xRot, (-(float) Math.PI / 2F));
 	}
 
 	@Override

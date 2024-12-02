@@ -1,0 +1,6 @@
+{
+  "parent": "item/crossbow",
+  "textures": {
+    "layer0": "hunters_return:item/mini_crossbow_pulling_1"
+  }
+}
