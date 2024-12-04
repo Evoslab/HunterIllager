@@ -4,25 +4,23 @@ import baguchi.hunters_return.client.render.state.BoomerangRenderState;
 import baguchi.hunters_return.entity.projectile.BoomerangEntity;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
-import net.minecraft.client.renderer.entity.ItemRenderer;
+import net.minecraft.client.renderer.item.ItemModelResolver;
 import net.minecraft.client.renderer.texture.OverlayTexture;
-import net.minecraft.client.resources.model.BakedModel;
-import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 
 @OnlyIn(Dist.CLIENT)
 public class BoomerangRender extends EntityRenderer<BoomerangEntity, BoomerangRenderState> {
-	private ItemRenderer itemRenderer;
+	private final ItemModelResolver itemModelResolver;
+
 
 	public BoomerangRender(EntityRendererProvider.Context renderManager) {
 		super(renderManager);
-		this.itemRenderer = Minecraft.getInstance().getItemRenderer();
+		this.itemModelResolver = renderManager.getItemModelResolver();
 	}
 
 	@Override
@@ -39,9 +37,7 @@ public class BoomerangRender extends EntityRenderer<BoomerangEntity, BoomerangRe
 			stackIn.mulPose(Axis.ZP.rotationDegrees((renderState.ageInTicks) * (((float) renderState.speed * 80.0F))));
 		}
 		stackIn.scale(1.25F, 1.25F, 1.25F);
-		BakedModel bakedmodel = this.itemRenderer.getModel(renderState.boomerang, null, (LivingEntity) null, 0);
-
-		this.itemRenderer.render(renderState.boomerang, ItemDisplayContext.GROUND, false, stackIn, bufferIn, packedLightIn, OverlayTexture.NO_OVERLAY, bakedmodel);
+		renderState.boomerang.render(stackIn, bufferIn, packedLightIn, OverlayTexture.NO_OVERLAY);
 		stackIn.popPose();
 		super.render(renderState, stackIn, bufferIn, packedLightIn);
 
@@ -57,6 +53,6 @@ public class BoomerangRender extends EntityRenderer<BoomerangEntity, BoomerangRe
 		p_364204_.yRot = p_361771_.getYRot(p_360538_);
 		p_364204_.inGround = p_361771_.inGround;
 		p_364204_.speed = (float) p_361771_.getSpeed();
-		p_364204_.boomerang = p_361771_.getBoomerang();
+		this.itemModelResolver.updateForNonLiving(p_364204_.boomerang, p_361771_.getBoomerang(), ItemDisplayContext.GROUND, p_361771_);
 	}
 }

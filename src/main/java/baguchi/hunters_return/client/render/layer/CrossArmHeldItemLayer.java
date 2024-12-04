@@ -3,14 +3,11 @@ package baguchi.hunters_return.client.render.layer;
 import baguchi.hunters_return.client.render.state.HunterRenderState;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.EntityModel;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.entity.RenderLayerParent;
 import net.minecraft.client.renderer.entity.layers.RenderLayer;
 import net.minecraft.client.renderer.texture.OverlayTexture;
-import net.minecraft.world.item.ItemDisplayContext;
-import net.minecraft.world.item.ItemStack;
 
 public class CrossArmHeldItemLayer<T extends HunterRenderState, M extends EntityModel<T>> extends RenderLayer<T, M> {
 	public CrossArmHeldItemLayer(RenderLayerParent<T, M> p_116686_) {
@@ -23,8 +20,7 @@ public class CrossArmHeldItemLayer<T extends HunterRenderState, M extends Entity
 			p_116699_.pushPose();
 			p_116699_.translate(0.0D, (double) 0.4F, (double) -0.4F);
 			p_116699_.mulPose(Axis.XP.rotationDegrees(180.0F));
-			ItemStack itemstack = p_116702_.leftHandItem;
-			Minecraft.getInstance().getItemRenderer().render(itemstack, ItemDisplayContext.GROUND, true, p_116699_, p_117350_, p_117351_, OverlayTexture.NO_OVERLAY, p_116702_.leftHandItemModel);
+			p_116702_.leftHandItem.render(p_116699_, p_117350_, p_117351_, OverlayTexture.NO_OVERLAY);
 
 			p_116699_.popPose();
 		}

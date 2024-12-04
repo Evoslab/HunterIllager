@@ -15,8 +15,6 @@ import net.minecraft.client.model.geom.builders.*;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.HumanoidArm;
 import net.minecraft.world.entity.monster.AbstractIllager;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
 
 public class HunterModel<T extends HunterRenderState> extends EntityModel<T> implements ArmedModel, HeadedModel, baguchi.bagus_lib.client.layer.IArmor {
     // This layer location should be baked with EntityRendererProvider.Context in the entityId renderer and passed into this model's constructor
@@ -101,14 +99,6 @@ public class HunterModel<T extends HunterRenderState> extends EntityModel<T> imp
 		this.leftArmPose = HumanoidModel.ArmPose.EMPTY;
 		AbstractIllager.IllagerArmPose abstractillager$illagerarmpose = entityIn.armPose;
 
-		ItemStack itemstack = entityIn.getMainHandItem();
-		if (itemstack.is(Items.GOAT_HORN) && entityIn.ticksUsingItem > 0) {
-			if (entityIn.mainArm == HumanoidArm.RIGHT) {
-				this.rightArmPose = HumanoidModel.ArmPose.TOOT_HORN;
-			} else {
-				this.leftArmPose = HumanoidModel.ArmPose.TOOT_HORN;
-			}
-		}
 		super.setupAnim(entityIn);
 		this.head.yRot = entityIn.yRot * ((float) Math.PI / 180F);
 		this.head.xRot = entityIn.xRot * ((float) Math.PI / 180F);

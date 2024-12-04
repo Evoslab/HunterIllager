@@ -20,12 +20,12 @@ import java.util.List;
 import java.util.Optional;
 
 
-public class MiniCrossBowItem extends CrossbowItem {
+public class MiniCrossbowItem extends CrossbowItem {
     private static final CrossbowItem.ChargingSounds DEFAULT_SOUNDS = new CrossbowItem.ChargingSounds(
             Optional.of(SoundEvents.CROSSBOW_LOADING_START), Optional.of(SoundEvents.CROSSBOW_LOADING_MIDDLE), Optional.of(SoundEvents.CROSSBOW_LOADING_END)
     );
 
-    public MiniCrossBowItem(Item.Properties miniCrossbow) {
+    public MiniCrossbowItem(Item.Properties miniCrossbow) {
         super(miniCrossbow);
     }
 
@@ -68,7 +68,7 @@ public class MiniCrossBowItem extends CrossbowItem {
                                     1.0F / (p_40876_.getRandom().nextFloat() * 0.5F + 1.0F) + 0.5F
                             )
                     );
-            if (itemstack2.getItem() instanceof MiniCrossBowItem && !isCharged(itemstack2)) {
+            if (itemstack2.getItem() instanceof MiniCrossbowItem && !isCharged(itemstack2)) {
                 tryLoadProjectiles(p_40877_, itemstack2);
             }
             return true;

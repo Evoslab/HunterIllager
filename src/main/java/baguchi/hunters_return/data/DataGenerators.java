@@ -18,21 +18,20 @@ import java.util.concurrent.CompletableFuture;
 @EventBusSubscriber(modid = HuntersReturn.MODID, bus = EventBusSubscriber.Bus.MOD)
 public class DataGenerators {
     @SubscribeEvent
-    public static void gatherData(GatherDataEvent event) {
+    public static void gatherData(GatherDataEvent.Client event) {
         DataGenerator generator = event.getGenerator();
         PackOutput packOutput = generator.getPackOutput();
         ExistingFileHelper existingFileHelper = event.getExistingFileHelper();
         CompletableFuture<HolderLookup.Provider> lookupProvider = event.getLookupProvider();
 
-        event.getGenerator().addProvider(event.includeServer(), new RegistryDataGenerator(packOutput, lookupProvider));
-        //event.getGenerator().addProvider(event.includeServer(), new EnchantTagGenerator(packOutput, lookupProvider, event.getExistingFileHelper()));
+        event.getGenerator().addProvider(true, new RegistryDataGenerator(packOutput, lookupProvider));
+        //event.getGenerator().addProvider(true, new EnchantTagGenerator(packOutput, lookupProvider, event.getExistingFileHelper()));
         BlockTagsProvider blocktags = new BlockTagGenerator(packOutput, lookupProvider, event.getExistingFileHelper());
-        event.getGenerator().addProvider(event.includeServer(), blocktags);
-        event.getGenerator().addProvider(event.includeServer(), new ItemTagGenerator(packOutput, lookupProvider, blocktags.contentsGetter(), event.getExistingFileHelper()));
-        event.getGenerator().addProvider(event.includeServer(), new EntityTagGenerator(packOutput, lookupProvider, event.getExistingFileHelper()));
-        event.getGenerator().addProvider(event.includeServer(), new BiomeTagGenerator(packOutput, lookupProvider, event.getExistingFileHelper()));
-        event.getGenerator().addProvider(event.includeServer(), new Runner(packOutput, lookupProvider));
-
+        event.getGenerator().addProvider(true, blocktags);
+        event.getGenerator().addProvider(true, new ItemTagGenerator(packOutput, lookupProvider, blocktags.contentsGetter(), event.getExistingFileHelper()));
+        event.getGenerator().addProvider(true, new EntityTagGenerator(packOutput, lookupProvider, event.getExistingFileHelper()));
+        event.getGenerator().addProvider(true, new BiomeTagGenerator(packOutput, lookupProvider, event.getExistingFileHelper()));
+        event.getGenerator().addProvider(true, new Runner(packOutput, lookupProvider));
     }
 
     public static final class Runner extends RecipeProvider.Runner {

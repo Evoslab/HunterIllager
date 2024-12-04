@@ -7,7 +7,7 @@ import baguchi.hunters_return.entity.projectile.BoomerangEntity;
 import baguchi.hunters_return.init.HunterEnchantments;
 import baguchi.hunters_return.init.HunterItems;
 import baguchi.hunters_return.init.HunterSounds;
-import baguchi.hunters_return.item.MiniCrossBowItem;
+import baguchi.hunters_return.item.MiniCrossbowItem;
 import baguchi.hunters_return.utils.HunterConfigUtils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
@@ -147,12 +147,12 @@ public class Hunter extends AbstractIllager implements CrossbowAttackMob, Ranged
 		this.goalSelector.addGoal(4, new AnimateAttackGoal(this, 1.15F, attackAnimationActionPoint, attackAnimationLength) {
 			@Override
 			public boolean canUse() {
-				return !mob.isHolding((item) -> item.getItem() instanceof BowItem || item.getItem() instanceof MiniCrossBowItem) && super.canUse();
+				return !mob.isHolding((item) -> item.getItem() instanceof BowItem || item.getItem() instanceof MiniCrossbowItem) && super.canUse();
 			}
 
 			@Override
 			public boolean canContinueToUse() {
-				return !mob.isHolding((item) -> item.getItem() instanceof BowItem || item.getItem() instanceof MiniCrossBowItem) && super.canContinueToUse();
+				return !mob.isHolding((item) -> item.getItem() instanceof BowItem || item.getItem() instanceof MiniCrossbowItem) && super.canContinueToUse();
 			}
 		});
 		this.goalSelector.addGoal(5, new SleepOnBedGoal(this, 1.0F, 12));
@@ -594,7 +594,7 @@ public class Hunter extends AbstractIllager implements CrossbowAttackMob, Ranged
 		double d1 = p_82196_1_.getY(0.3333333333333333D) - boomerang.getY();
 		double d2 = p_82196_1_.getZ() - this.getZ();
 		double d3 = (double) Mth.sqrt((float) (d0 * d0 + d2 * d2));
-		boomerang.shoot(d0, d1 + d3 * (double) 0.2F, d2, 1.6F, (float) (14 - this.level().getDifficulty().getId() * 4));
+		boomerang.shoot(d0, d1 + d3 * (double) 0.2F, d2, 1.2F, (float) (14 - this.level().getDifficulty().getId() * 4));
 		this.playSound(SoundEvents.SKELETON_SHOOT, 1.0F, 1.0F / (this.getRandom().nextFloat() * 0.4F + 0.8F));
 		this.level().addFreshEntity(boomerang);
 		this.level().broadcastEntityEvent(this, (byte) 62);

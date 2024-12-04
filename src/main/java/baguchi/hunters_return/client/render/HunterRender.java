@@ -8,11 +8,11 @@ import baguchi.hunters_return.client.model.OldHunterModel;
 import baguchi.hunters_return.client.render.state.HunterRenderState;
 import baguchi.hunters_return.entity.Hunter;
 import com.mojang.blaze3d.vertex.PoseStack;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.entity.MobRenderer;
 import net.minecraft.client.renderer.entity.layers.ItemInHandLayer;
+import net.minecraft.client.renderer.entity.state.ArmedEntityRenderState;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.monster.AbstractIllager;
 import net.neoforged.api.distmarker.Dist;
@@ -33,7 +33,7 @@ public class HunterRender extends MobRenderer<Hunter, HunterRenderState, HunterM
 	public HunterRender(EntityRendererProvider.Context renderManagerIn) {
 		super(renderManagerIn, new HunterModel<>(renderManagerIn.bakeLayer(ModModelLayers.HUNTER)), 0.5F);
 		this.addLayer(new CustomArmorLayer<>(this, renderManagerIn));
-		this.addLayer(new ItemInHandLayer<>(this, Minecraft.getInstance().getItemRenderer()));
+		this.addLayer(new ItemInHandLayer<>(this));
 		this.old = new OldHunterModel(renderManagerIn.bakeLayer(ModModelLayers.HUNTER_OLD));
 	}
 
@@ -55,7 +55,7 @@ public class HunterRender extends MobRenderer<Hunter, HunterRenderState, HunterM
 	@Override
 	public void extractRenderState(Hunter hunter, HunterRenderState hunterState, float p_361157_) {
 		super.extractRenderState(hunter, hunterState, p_361157_);
-
+		ArmedEntityRenderState.extractArmedEntityRenderState(hunter, hunterState, this.itemModelResolver);
 		hunterState.isRiding = hunter.isPassenger();
 		hunterState.mainArm = hunter.getMainArm();
 		hunterState.armPose = hunter.getArmPose();
