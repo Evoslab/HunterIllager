@@ -18,7 +18,10 @@ import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.Mth;
 import net.minecraft.world.damagesource.DamageSource;
-import net.minecraft.world.entity.*;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.MoverType;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
@@ -198,7 +201,7 @@ public class BoomerangEntity extends Projectile {
 					this.lastState = this.level().getBlockState(result.getBlockPos());
 					Vec3 vec3 = result.getLocation().subtract(this.getX(), this.getY(), this.getZ());
 					this.setDeltaMovement(vec3);
-					Vec3 vec31 = vec3.normalize().scale((double) 0.05F);
+					Vec3 vec31 = vec3.normalize().scale(0.05F);
 					this.setPosRaw(this.getX() - vec31.x, this.getY() - vec31.y, this.getZ() - vec31.z);
 				}
 			} else {
@@ -228,8 +231,7 @@ public class BoomerangEntity extends Projectile {
 		{
 			if (this.getBoomerang() != null) {
 				Level var6 = this.level();
-				if (var6 instanceof ServerLevel) {
-					ServerLevel serverlevel = (ServerLevel) var6;
+				if (var6 instanceof ServerLevel serverlevel) {
 					var10000 = EnchantmentHelper.modifyKnockback(serverlevel, this.getBoomerang(), p_346111_, p_346412_, 0.0F);
 					break label18;
 				}
@@ -238,7 +240,7 @@ public class BoomerangEntity extends Projectile {
 			var10000 = 0.0F;
 		}
 
-		double d0 = (double) var10000;
+		double d0 = var10000;
 		if (d0 > 0.0) {
 			double d1 = Math.max(0.0, 1.0 - p_346111_.getAttributeValue(Attributes.KNOCKBACK_RESISTANCE));
 			Vec3 vec3 = this.getDeltaMovement().multiply(1.0, 0.0, 1.0).normalize().scale(d0 * 0.6 * d1);
@@ -259,7 +261,7 @@ public class BoomerangEntity extends Projectile {
 			var10002 = null;
 		}
 
-		EnchantmentHelper.onHitBlock(p_345462_, p_345083_, var10002, this, (EquipmentSlot) null, vec3, p_345462_.getBlockState(p_345204_.getBlockPos()), (p_348569_) -> {
+		EnchantmentHelper.onHitBlock(p_345462_, p_345083_, var10002, this, null, vec3, p_345462_.getBlockState(p_345204_.getBlockPos()), (p_348569_) -> {
 		});
 	}
 
@@ -436,7 +438,7 @@ public class BoomerangEntity extends Projectile {
 				this.applyGravity();
 			}
 
-			this.setDeltaMovement(this.getDeltaMovement().scale((double) f));
+			this.setDeltaMovement(this.getDeltaMovement().scale(f));
 
 
 			this.setPos(d7, d2, d3);
@@ -485,7 +487,7 @@ public class BoomerangEntity extends Projectile {
 	private void startFalling() {
 		this.setInGround(false);
 		Vec3 vec3 = this.getDeltaMovement();
-		this.setDeltaMovement(vec3.multiply((double) (this.random.nextFloat() * 0.2F), (double) (this.random.nextFloat() * 0.2F), (double) (this.random.nextFloat() * 0.2F)));
+		this.setDeltaMovement(vec3.multiply(this.random.nextFloat() * 0.2F, this.random.nextFloat() * 0.2F, this.random.nextFloat() * 0.2F));
 		this.inGroundTime = 0;
 	}
 
@@ -573,11 +575,11 @@ public class BoomerangEntity extends Projectile {
 	}
 
 	public boolean isReturning() {
-		return ((Boolean) this.entityData.get(RETURNING));
+		return this.entityData.get(RETURNING);
 	}
 
 	public ItemStack getBoomerang() {
-		return (ItemStack) this.entityData.get(BOOMERANG);
+		return this.entityData.get(BOOMERANG);
 	}
 
 	public double getSpeed() {

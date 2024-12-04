@@ -47,6 +47,7 @@ public class BoomerangRender extends EntityRenderer<BoomerangEntity, BoomerangRe
 		return new BoomerangRenderState();
 	}
 
+	@Override
 	public void extractRenderState(BoomerangEntity p_361771_, BoomerangRenderState p_364204_, float p_360538_) {
 		super.extractRenderState(p_361771_, p_364204_, p_360538_);
 		p_364204_.xRot = p_361771_.getXRot(p_360538_);

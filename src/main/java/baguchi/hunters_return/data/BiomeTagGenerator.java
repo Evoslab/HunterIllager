@@ -6,6 +6,7 @@ import net.minecraft.core.HolderLookup;
 import net.minecraft.data.PackOutput;
 import net.minecraft.data.tags.BiomeTagsProvider;
 import net.minecraft.tags.BiomeTags;
+import net.minecraft.world.level.biome.Biomes;
 import net.neoforged.neoforge.common.data.ExistingFileHelper;
 
 import java.util.concurrent.CompletableFuture;
@@ -18,6 +19,6 @@ public class BiomeTagGenerator extends BiomeTagsProvider {
     @SuppressWarnings("unchecked")
     @Override
     protected void addTags(HolderLookup.Provider provider) {
-        this.tag(ModBiomeTags.HAS_HUNTER_HOUSE).addTag(BiomeTags.IS_TAIGA).addTag(BiomeTags.IS_FOREST);
+        this.tag(ModBiomeTags.HAS_HUNTER_HOUSE).addTag(BiomeTags.IS_TAIGA).addTag(BiomeTags.IS_FOREST).remove(Biomes.PALE_GARDEN);
     }
 }

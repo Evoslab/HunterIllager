@@ -8,5 +8,5 @@ public class BoomerangRenderState extends EntityRenderState {
     public float yRot;
     public float speed;
     public boolean inGround;
-    public ItemStackRenderState boomerang;
+    public ItemStackRenderState boomerang = new ItemStackRenderState();
 }
