@@ -1,5 +1,6 @@
 package baguchi.hunters_return.client.render.item.properties;
 
+import baguchi.hunters_return.item.MiniCrossbowItem;
 import com.mojang.serialization.MapCodec;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.renderer.item.properties.numeric.RangeSelectItemModelProperty;
@@ -23,7 +24,7 @@ public class MiniCrossbowPull implements RangeSelectItemModelProperty {
         } else if (CrossbowItem.isCharged(p_387470_)) {
             return 0.0F;
         } else {
-            int i = CrossbowItem.getChargeDuration(p_387470_, p_388564_);
+            int i = MiniCrossbowItem.getChargeDuration(p_387470_, p_388564_);
             return (float) UseDuration.useDuration(p_387470_, p_388564_) / (float) i;
         }
     }
