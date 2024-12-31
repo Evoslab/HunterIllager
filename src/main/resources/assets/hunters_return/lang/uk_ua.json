@@ -1,6 +1,9 @@
 {
   "item.hunters_return.spawnegg_hunter": "Яйце виклику мисливця",
   "item.hunters_return.boomerang": "Бумеранг",
+  "item.hunters_return.quiver": "Сагайдак",
+  "item.hunters_return.mini_crossbow": "Мініарбалет",
+  "item.hunters_return.quiver.empty.description": "Може зберігати до двох стосів різних стріл",
   "entity.hunters_return.boomerang": "Бумеранг",
   "entity.hunters_return.spin_blade": "Обертальне лезо",
   "entity.hunters_return.hunter": "Мисливець",
@@ -16,6 +19,12 @@
   "hunters_return.config.foodWhitelist": "Білий список їжі мисливця",
   "hunters_return.config.attackableWhitelist": "Білий список цілей мисливця",
   "enchantment.hunters_return.bounce": "Відскок",
+  "enchantment.hunters_return.bounce.desc": "З цим зачаруванням бумеранг відскакуватиме від стіни",
+  "enchantment.hunters_return.return": "Повернення",
+  "enchantment.hunters_return.return.desc": "З цим зачаруванням бумеранг повертатиметься до власника",
+  "enchantment.hunters_return.cutting": "Розріз",
+  "enchantment.hunters_return.cutting.desc": "З цим зачаруванням бумеранг завдаватиме більше шкоди",
   "hunters_return.config.spacing": "Інтервал",
-  "hunters_return.config.separation": "Поділ"
+  "hunters_return.config.separation": "Поділ",
+  "hunters_return.config.rudeHogSpawnInBastion": "Поява рудегоґа в бастіоні"
 }
