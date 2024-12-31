@@ -38,7 +38,7 @@ public class MiniCrossbowItem extends CrossbowItem {
         ChargedProjectiles chargedprojectiles2 = itemstack2.get(DataComponents.CHARGED_PROJECTILES);
 
         if (chargedprojectiles != null && !chargedprojectiles.isEmpty()) {
-            this.performShooting(p_40920_, p_40921_, p_40922_, itemstack, getShootingPower(chargedprojectiles) * 0.5F, 1.0F, null);
+            this.performShooting(p_40920_, p_40921_, p_40922_, itemstack, getShootingPower(chargedprojectiles), 1.0F, null);
             return InteractionResult.CONSUME;
         } else if (chargedprojectiles2 != null && !chargedprojectiles2.isEmpty()) {
             return InteractionResult.FAIL;
@@ -98,7 +98,7 @@ public class MiniCrossbowItem extends CrossbowItem {
     }
 
     private static float getShootingPower(ChargedProjectiles p_330249_) {
-        return p_330249_.contains(Items.FIREWORK_ROCKET) ? 1.6F * 0.9F : 3F;
+        return p_330249_.contains(Items.FIREWORK_ROCKET) ? 1.6F * 0.85F : 2.25F;
     }
 
     @Override
