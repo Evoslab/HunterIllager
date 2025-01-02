@@ -225,7 +225,6 @@ public class HunterModel<T extends HunterRenderState> extends EntityModel<T> imp
 		this.everything.translateAndRotate(poseStack);
 		this.body.translateAndRotate(poseStack);
 		modelPart.translateAndRotate(poseStack);
-		poseStack.translate(0, -3 / 16F, 0);
 	}
 
 	@Override
@@ -240,12 +239,6 @@ public class HunterModel<T extends HunterRenderState> extends EntityModel<T> imp
 	public void translateToLeg(ModelPart modelPart, PoseStack poseStack) {
 		this.everything.translateAndRotate(poseStack);
 		modelPart.translateAndRotate(poseStack);
-		if (this.RightLeg == modelPart) {
-			poseStack.translate(2 / 16F, 0F, 0);
-		}
-		if (this.LeftLeg == modelPart) {
-			poseStack.translate(-2 / 16F, 0F, 0);
-		}
 		poseStack.translate(0, -(12F / 16F), 0);
 		poseStack.scale(1.05F, 1.05F, 1.05F);
 	}
@@ -255,12 +248,6 @@ public class HunterModel<T extends HunterRenderState> extends EntityModel<T> imp
 		this.everything.translateAndRotate(poseStack);
 		this.body.translateAndRotate(poseStack);
 		modelPart.translateAndRotate(poseStack);
-		if (this.RightArm == modelPart) {
-			poseStack.translate(4 / 16F, -3 / 16F, 0);
-		}
-		if (this.LeftArm == modelPart) {
-			poseStack.translate(-4 / 16F, -3 / 16F, 0);
-		}
 		poseStack.scale(1.05F, 1.05F, 1.05F);
 	}
 
