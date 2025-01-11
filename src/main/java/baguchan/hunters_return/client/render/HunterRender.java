@@ -28,14 +28,7 @@ public class HunterRender<T extends Hunter> extends MobRenderer<T, HunterModel<T
 	public HunterRender(EntityRendererProvider.Context renderManagerIn) {
 		super(renderManagerIn, new HunterModel<>(renderManagerIn.bakeLayer(ModModelLayers.HUNTER)), 0.5F);
 		this.addLayer(new CustomArmorLayer<>(this, renderManagerIn));
-		this.addLayer(new ItemInHandLayer<>(this, Minecraft.getInstance().getEntityRenderDispatcher().getItemInHandRenderer()) {
-			@Override
-			public void render(PoseStack p_117204_, MultiBufferSource p_117205_, int p_117206_, T p_117207_, float p_117208_, float p_117209_, float p_117210_, float p_117211_, float p_117212_, float p_117213_) {
-				if (this.getParentModel() != old) {
-					super.render(p_117204_, p_117205_, p_117206_, p_117207_, p_117208_, p_117209_, p_117210_, p_117211_, p_117212_, p_117213_);
-				}
-			}
-		});
+		this.addLayer(new ItemInHandLayer<>(this, Minecraft.getInstance().getEntityRenderDispatcher().getItemInHandRenderer()));
 		this.old = new OldHunterModel<>(renderManagerIn.bakeLayer(ModModelLayers.HUNTER_OLD));
 	}
 
