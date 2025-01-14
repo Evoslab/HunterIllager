@@ -6,10 +6,10 @@
       "item": "minecraft:iron_nugget"
     },
     "S": {
-      "tag": "c:strings"
+      "item": "minecraft:string"
     },
     "R": {
-      "tag": "c:rods/wooden"
+      "tag": "forge:rods/wooden"
     }
   },
   "pattern": [
