@@ -18,8 +18,8 @@ import net.minecraft.world.entity.monster.AbstractIllager;
 
 public class HunterModel<T extends HunterRenderState> extends EntityModel<T> implements ArmedModel, HeadedModel, baguchi.bagus_lib.client.layer.IArmor {
     // This layer location should be baked with EntityRendererProvider.Context in the entityId renderer and passed into this model's constructor
-	private final ModelPart body;
-	private final ModelPart everything;
+	public final ModelPart body;
+	public final ModelPart everything;
 	private final ModelPart LeftLeg;
 	private final ModelPart RightLeg;
 	private final ModelPart RightArm;

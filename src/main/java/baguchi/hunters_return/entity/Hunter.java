@@ -316,6 +316,7 @@ public class Hunter extends AbstractIllager implements CrossbowAttackMob, Ranged
 
 			this.useMouthItem = itemstack;
 			this.mouthItemRemaining = duration;
+			this.setUsingMouthItem(true);
 			if (!this.level().isClientSide) {
 				this.gameEvent(GameEvent.ITEM_INTERACT_START);
 			}
@@ -361,11 +362,14 @@ public class Hunter extends AbstractIllager implements CrossbowAttackMob, Ranged
 		if (foodProperties != null) {
 			this.heal(foodProperties.nutrition());
 		}
+		this.getMouthItem().finishUsingItem(this.level(), this);
+		this.setMouthItem(ItemStack.EMPTY);
 	}
 
 	protected void stopUsingMouth() {
 		this.useMouthItem = ItemStack.EMPTY;
 		this.mouthItemRemaining = 0;
+		this.setUsingMouthItem(false);
 	}
 
 
@@ -395,8 +399,9 @@ public class Hunter extends AbstractIllager implements CrossbowAttackMob, Ranged
 
 	public void addAdditionalSaveData(CompoundTag p_213281_1_) {
 		super.addAdditionalSaveData(p_213281_1_);
-		p_213281_1_.put("mouth_item", this.getMouthItem().save(this.registryAccess(), new CompoundTag()));
-
+		if (!this.getMouthItem().isEmpty()) {
+			p_213281_1_.put("mouth_item", this.getMouthItem().save(this.registryAccess(), new CompoundTag()));
+		}
 		if (this.homeTarget != null) {
 			p_213281_1_.put("HomeTarget", NbtUtils.writeBlockPos(this.homeTarget));
 		}
