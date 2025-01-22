@@ -65,9 +65,12 @@ import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.item.equipment.trim.*;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.ServerLevelAccessor;
+import net.minecraft.world.level.gameevent.GameEvent;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
+import net.neoforged.neoforge.common.CommonHooks;
+import net.neoforged.neoforge.event.EventHooks;
 
 import javax.annotation.Nullable;
 import java.util.EnumSet;
@@ -77,6 +80,8 @@ import java.util.function.Predicate;
 
 public class Hunter extends AbstractIllager implements CrossbowAttackMob, RangedAttackMob {
 	private static final EntityDataAccessor<Boolean> IS_CHARGING_CROSSBOW = SynchedEntityData.defineId(Hunter.class, EntityDataSerializers.BOOLEAN);
+	private static final EntityDataAccessor<Boolean> IS_USING_MOUTH = SynchedEntityData.defineId(Hunter.class, EntityDataSerializers.BOOLEAN);
+	private static final EntityDataAccessor<ItemStack> MOUTH_ITEM = SynchedEntityData.defineId(Hunter.class, EntityDataSerializers.ITEM_STACK);
 
 	private static final EntityDataAccessor<String> HUNTER_TYPE = SynchedEntityData.defineId(Hunter.class, EntityDataSerializers.STRING);
 	private static final Predicate<? super ItemEntity> ALLOWED_ITEMS = (p_213616_0_) -> {
@@ -88,6 +93,8 @@ public class Hunter extends AbstractIllager implements CrossbowAttackMob, Ranged
 	@Nullable
 	private BlockPos homeTarget;
 	private int cooldown;
+	protected ItemStack useMouthItem = ItemStack.EMPTY;
+	protected int mouthItemRemaining;
 
 	private final int attackAnimationLength = (int) (18);
 	private final int shootAnimationLength = 20;
@@ -112,7 +119,26 @@ public class Hunter extends AbstractIllager implements CrossbowAttackMob, Ranged
         super.defineSynchedData(p_326255_);
         p_326255_.define(HUNTER_TYPE, HunterType.NORMAL.name());
 		p_326255_.define(IS_CHARGING_CROSSBOW, false);
+		p_326255_.define(IS_USING_MOUTH, false);
+		p_326255_.define(MOUTH_ITEM, ItemStack.EMPTY);
 	}
+
+	public void setMouthItem(ItemStack itemStack) {
+		this.entityData.set(MOUTH_ITEM, itemStack);
+	}
+
+	public ItemStack getMouthItem() {
+		return this.entityData.get(MOUTH_ITEM);
+	}
+
+	public void setUsingMouthItem(boolean mouth) {
+		this.entityData.set(IS_USING_MOUTH, mouth);
+	}
+
+	public boolean isUsingMouthItem() {
+		return this.entityData.get(IS_USING_MOUTH);
+	}
+
 
 	public void setHunterType(HunterType type) {
 		this.entityData.set(HUNTER_TYPE, type.name());
@@ -218,6 +244,7 @@ public class Hunter extends AbstractIllager implements CrossbowAttackMob, Ranged
 		}
 	}
 
+	@Override
 	public void handleEntityEvent(byte p_219360_) {
 		if (p_219360_ == 4) {
 			this.attackAnimationTick = 0;
@@ -234,7 +261,13 @@ public class Hunter extends AbstractIllager implements CrossbowAttackMob, Ranged
 
 	}
 
+	@Override
+	public void tick() {
+		super.tick();
+		this.updatingUsingMouthItem();
+	}
 
+	@Override
 	public void aiStep() {
 		if (!this.level().isClientSide && this.isAlive()) {
 			ItemStack mainhand = this.getItemInHand(InteractionHand.MAIN_HAND);
@@ -242,9 +275,7 @@ public class Hunter extends AbstractIllager implements CrossbowAttackMob, Ranged
 			if (!this.isUsingItem() && this.getOffhandItem().isEmpty() && (mainhand.getItem() == Items.BOW && this.getTarget() == null || mainhand.getItem() != Items.BOW)) {
 				ItemStack stack = ItemStack.EMPTY;
 
-				if (this.getHealth() < this.getMaxHealth() && this.random.nextFloat() < 0.005F) {
-					stack = this.findFood();
-				} else if (this.getHealth() >= this.getMaxHealth() && this.random.nextFloat() < 0.01F) {
+				if (this.getHealth() >= this.getMaxHealth() && this.random.nextFloat() < 0.01F) {
 					stack = this.findBoomerang();
 				}
 
@@ -255,19 +286,88 @@ public class Hunter extends AbstractIllager implements CrossbowAttackMob, Ranged
 					}
 				}
 			}
+
+			if (this.getMouthItem().isEmpty()) {
+				ItemStack stack = ItemStack.EMPTY;
+
+				if (this.getHealth() < this.getMaxHealth() && this.random.nextFloat() < 0.005F) {
+					stack = this.findFood();
+				}
+
+				if (!stack.isEmpty()) {
+					this.setMouthItem(stack);
+					if (stack.get(DataComponents.FOOD) != null) {
+						this.startUsingMouthItem();
+					}
+				}
+			}
 		}
 
 		super.aiStep();
 	}
 
-	@Override
-	public void stopUsingItem() {
-		FoodProperties foodProperties = this.getUseItem().get(DataComponents.FOOD);
+	public void startUsingMouthItem() {
+		ItemStack itemstack = this.getMouthItem();
+		if (!itemstack.isEmpty() && !this.isUsingMouthItem()) {
+			int duration = EventHooks.onItemUseStart(this, itemstack, itemstack.getUseDuration(this));
+			if (duration < 0) {
+				return;
+			}
+
+			this.useMouthItem = itemstack;
+			this.mouthItemRemaining = duration;
+			if (!this.level().isClientSide) {
+				this.gameEvent(GameEvent.ITEM_INTERACT_START);
+			}
+		}
+
+	}
+
+	private void updatingUsingMouthItem() {
+		if (this.isUsingMouthItem()) {
+			ItemStack itemStack = this.getMouthItem();
+			if (CommonHooks.canContinueUsing(this.useMouthItem, itemStack)) {
+				this.useMouthItem = itemStack;
+			}
+
+			if (itemStack == this.useMouthItem) {
+				this.updateUsingMouthItem(this.useMouthItem);
+			} else {
+				this.stopUsingMouth();
+			}
+		}
+
+	}
+
+	protected void updateUsingMouthItem(ItemStack p_147201_) {
+		if (!p_147201_.isEmpty()) {
+			this.mouthItemRemaining = EventHooks.onItemUseTick(this, p_147201_, this.mouthItemRemaining);
+		}
+
+		if (this.mouthItemRemaining > 0) {
+			p_147201_.onUseTick(this.level(), this, this.mouthItemRemaining);
+		}
+
+		if (--this.mouthItemRemaining <= 0 && !this.level().isClientSide && !p_147201_.useOnRelease()) {
+			this.completeUsingMouth();
+
+			this.stopUsingMouth();
+		}
+
+	}
+
+	protected void completeUsingMouth() {
+		FoodProperties foodProperties = this.getMouthItem().get(DataComponents.FOOD);
 		if (foodProperties != null) {
 			this.heal(foodProperties.nutrition());
 		}
-		super.stopUsingItem();
 	}
+
+	protected void stopUsingMouth() {
+		this.useMouthItem = ItemStack.EMPTY;
+		this.mouthItemRemaining = 0;
+	}
+
 
 	private ItemStack findFood() {
 		for (int i = 0; i < this.inventory.getContainerSize(); ++i) {
@@ -295,6 +395,8 @@ public class Hunter extends AbstractIllager implements CrossbowAttackMob, Ranged
 
 	public void addAdditionalSaveData(CompoundTag p_213281_1_) {
 		super.addAdditionalSaveData(p_213281_1_);
+		p_213281_1_.put("mouth_item", this.getMouthItem().save(this.registryAccess(), new CompoundTag()));
+
 		if (this.homeTarget != null) {
 			p_213281_1_.put("HomeTarget", NbtUtils.writeBlockPos(this.homeTarget));
 		}
@@ -313,12 +415,14 @@ public class Hunter extends AbstractIllager implements CrossbowAttackMob, Ranged
 		p_213281_1_.putString("HunterType", getHunterType().name());
 	}
 
-	public void readAdditionalSaveData(CompoundTag p_70037_1_) {
-		super.readAdditionalSaveData(p_70037_1_);
-		if (p_70037_1_.contains("HomeTarget")) {
-            this.homeTarget = NbtUtils.readBlockPos(p_70037_1_, "HomeTarget").orElse(null);
+	public void readAdditionalSaveData(CompoundTag nbt) {
+		super.readAdditionalSaveData(nbt);
+		this.setMouthItem(ItemStack.parse(this.registryAccess(), nbt.getCompound("mouth_item")).orElse(this.getMouthItem()));
+
+		if (nbt.contains("HomeTarget")) {
+			this.homeTarget = NbtUtils.readBlockPos(nbt, "HomeTarget").orElse(null);
 		}
-		ListTag listnbt = p_70037_1_.getList("Inventory", 10);
+		ListTag listnbt = nbt.getList("Inventory", 10);
 
 		for (int i = 0; i < listnbt.size(); ++i) {
             Optional<ItemStack> itemstack = ItemStack.parse(this.registryAccess(), listnbt.getCompound(i));
@@ -327,8 +431,8 @@ public class Hunter extends AbstractIllager implements CrossbowAttackMob, Ranged
 			}
 		}
 
-		this.cooldown = p_70037_1_.getInt("HuntingCooldown");
-		this.setHunterType(HunterType.get(p_70037_1_.getString("HunterType")));
+		this.cooldown = nbt.getInt("HuntingCooldown");
+		this.setHunterType(HunterType.get(nbt.getString("HunterType")));
 		this.setCanPickUpLoot(true);
 	}
 

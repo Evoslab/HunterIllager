@@ -25,7 +25,8 @@ public class HunterModel<T extends HunterRenderState> extends EntityModel<T> imp
 	private final ModelPart RightArm;
 	private final ModelPart LeftArm;
 	private final ModelPart root;
-	private final ModelPart head;
+	public final ModelPart head;
+	private final ModelPart nose;
 	private final ModelPart cape;
 
 	public HumanoidModel.ArmPose leftArmPose = HumanoidModel.ArmPose.EMPTY;
@@ -42,6 +43,7 @@ public class HunterModel<T extends HunterRenderState> extends EntityModel<T> imp
 		this.RightArm = this.body.getChild("right_arm");
 		this.LeftArm = this.body.getChild("left_arm");
 		this.head = this.body.getChild("head");
+		this.nose = this.head.getChild("nose");
 	}
 
 	public static LayerDefinition createBodyLayer() {
@@ -59,8 +61,9 @@ public class HunterModel<T extends HunterRenderState> extends EntityModel<T> imp
 
 		PartDefinition cape = body.addOrReplaceChild("cape", CubeListBuilder.create().texOffs(28, 32).addBox(-4.5F, 0.0F, 0.0F, 9.0F, 15.0F, 1.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(0.0F, -12.0F, 3.0F, 0.1309F, 0.0F, 0.0F));
 
-		PartDefinition head = body.addOrReplaceChild("head", CubeListBuilder.create().texOffs(0, 0).addBox(-4.0F, -10.0F, -4.0F, 8.0F, 10.0F, 8.0F, new CubeDeformation(0.0F))
-				.texOffs(0, 0).addBox(-1.0F, -3.0F, -6.0F, 2.0F, 4.0F, 2.0F, new CubeDeformation(0.0F)), PartPose.offset(0.0F, -12.0F, 0.0F));
+		PartDefinition head = body.addOrReplaceChild("head", CubeListBuilder.create().texOffs(0, 0).addBox(-4.0F, -10.0F, -4.0F, 8.0F, 10.0F, 8.0F, new CubeDeformation(0.0F)), PartPose.offset(0.0F, -12.0F, 0.0F));
+
+		PartDefinition nose = head.addOrReplaceChild("nose", CubeListBuilder.create().texOffs(0, 0).addBox(-1.0F, 0.0F, -3.0F, 2.0F, 4.0F, 2.0F, new CubeDeformation(0.0F)), PartPose.offset(0.0F, -3.0F, -3.0F));
 
 		PartDefinition hat = head.addOrReplaceChild("hat", CubeListBuilder.create().texOffs(65, 0).addBox(-4.0F, -10.0F, -4.0F, 8.0F, 10.0F, 8.0F, new CubeDeformation(0.15F)), PartPose.offset(0.0F, 0.0F, 0.0F));
 
@@ -203,6 +206,9 @@ public class HunterModel<T extends HunterRenderState> extends EntityModel<T> imp
 				this.LeftArm.zRot = -2.3561945F;
 				this.LeftArm.yRot = 0.0F;
 			}
+		}
+		if (!entityIn.mouthItem.isEmpty()) {
+			this.nose.xRot = -0.5F;
 		}
 	}
 

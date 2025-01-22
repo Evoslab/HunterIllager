@@ -5,6 +5,7 @@ import baguchi.hunters_return.HunterConfig;
 import baguchi.hunters_return.client.ModModelLayers;
 import baguchi.hunters_return.client.model.HunterModel;
 import baguchi.hunters_return.client.model.OldHunterModel;
+import baguchi.hunters_return.client.render.layer.MouthItemLayer;
 import baguchi.hunters_return.client.render.state.HunterRenderState;
 import baguchi.hunters_return.entity.Hunter;
 import com.mojang.blaze3d.vertex.PoseStack;
@@ -34,6 +35,7 @@ public class HunterRender extends MobRenderer<Hunter, HunterRenderState, HunterM
 		super(renderManagerIn, new HunterModel<>(renderManagerIn.bakeLayer(ModModelLayers.HUNTER)), 0.5F);
 		this.addLayer(new CustomArmorLayer<>(this, renderManagerIn));
 		this.addLayer(new ItemInHandLayer<>(this));
+		this.addLayer(new MouthItemLayer<>(this));
 		this.old = new OldHunterModel(renderManagerIn.bakeLayer(ModModelLayers.HUNTER_OLD));
 	}
 
@@ -56,6 +58,8 @@ public class HunterRender extends MobRenderer<Hunter, HunterRenderState, HunterM
 	public void extractRenderState(Hunter hunter, HunterRenderState hunterState, float p_361157_) {
 		super.extractRenderState(hunter, hunterState, p_361157_);
 		ArmedEntityRenderState.extractArmedEntityRenderState(hunter, hunterState, this.itemModelResolver);
+		HunterRenderState.extractMouthEntityRenderState(hunter, hunterState, this.itemModelResolver);
+
 		hunterState.isRiding = hunter.isPassenger();
 		hunterState.mainArm = hunter.getMainArm();
 		hunterState.armPose = hunter.getArmPose();
