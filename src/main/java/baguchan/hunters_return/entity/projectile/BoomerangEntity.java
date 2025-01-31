@@ -331,18 +331,18 @@ public class BoomerangEntity extends Projectile {
 
 
 			Entity entity = getOwner();
-			if (returningLevel > 0 && !isReturning()) {
+			if (!isReturning()) {
 				if (this.flyTick >= 30 && entity != null) {
 					this.level().playSound(null, entity.blockPosition(), SoundEvents.TRIDENT_RETURN, SoundSource.PLAYERS, 1.0F, 1.0F);
 					setReturning(true);
 				}
 			}
-			if (returningLevel > 0 && entity != null && !shouldReturnToThrower() && isReturning()) {
+			if (entity != null && !shouldReturnToThrower() && isReturning()) {
 				drop(getX(), getY(), getZ());
-			} else if (returningLevel > 0 && entity != null && isReturning()) {
+			} else if (entity != null && isReturning()) {
 				this.noPhysics = true;
 				Vec3 vec3d3 = new Vec3(entity.getX() - getX(), entity.getEyeY() - getY(), entity.getZ() - getZ());
-				double d0 = 0.05D * returningLevel;
+				double d0 = 0.05D * (returningLevel + 1);
 				this.setDeltaMovement(getDeltaMovement().scale(0.95D).add(vec3d3.normalize().scale(d0)));
 			}
 
@@ -367,7 +367,7 @@ public class BoomerangEntity extends Projectile {
 			this.setXRot((float) (Mth.atan2(d6, d4) * 180.0F / (float) Math.PI));
 			this.setXRot(lerpRotation(this.xRotO, this.getXRot()));
 			this.setYRot(lerpRotation(this.yRotO, this.getYRot()));
-			float f = returningLevel > 0 ? 1.0F : 0.99F;
+			float f = 1.0F;
 			if (this.isInWater()) {
 				for (int j = 0; j < 4; j++) {
 					float f1 = 0.25F;
